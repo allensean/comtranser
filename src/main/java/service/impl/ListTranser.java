@@ -71,7 +71,7 @@ public class ListTranser implements ComTranser {
 					Method tgetMethod = targetClass.getMethod("get" + captureName(targetKey));
 					Object targetValue = tgetMethod.invoke(targetObj);
 
-					if (sourceValue.equals(targetValue)) {
+					if (sourceValue!=null && sourceValue.equals(targetValue)) {
 						sameSet.add(sourceValue);
 
 						if (diffSet.contains(targetValue)) {
