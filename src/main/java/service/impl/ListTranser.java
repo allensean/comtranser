@@ -24,8 +24,9 @@ import main.java.service.ComTranser;
 public class ListTranser implements ComTranser {
 
 	@Override
-	public List[] sync(List sources, List targets, String targetClassName, Map fieldMap, Map compareMap) {
-		List[] results = null;
+	public List[] transToListArray(List sources, List targets, String targetClassName, Map fieldMap, Map compareMap,
+			String valueFrom) {
+		List[] results = new List[3];
 		List newAdds = new ArrayList<>();
 		List updates = new ArrayList<>();
 		List deletes = new ArrayList<>();
@@ -33,11 +34,9 @@ public class ListTranser implements ComTranser {
 			return results;
 		}
 		if (targets == null || targets.size() == 0) {
-			results = new List[1];
-			results[0] = sync(sources, targetClassName, fieldMap, compareMap);
+			results[0] = transToList(sources, targetClassName, fieldMap, compareMap);
 			return results;
 		}
-		// if (targets != null && targets.size() > 0) {
 		Set<Object> diffSet = new HashSet<>();
 		Set<Object> sameSet = new HashSet<>();
 		Set<Object> delSet = new HashSet<>();
@@ -57,7 +56,119 @@ public class ListTranser implements ComTranser {
 			String targetClsName = targets.get(0).getClass().getName();
 			Class<?> targetClass = Class.forName(targetClsName);
 
-			// if (sources.size() >= targets.size()) {
+			for (int s = 0; s < sources.size(); s++) {
+				Object sourceObj = sources.get(s);
+				// 获取sources的get值
+				Method sgetMethod = sourceClass.getMethod("get" + captureName(sourceKey));
+				Object sourceValue = sgetMethod.invoke(sourceObj);
+
+				for (int t = 0; t < targets.size(); t++) {
+					Object targetObj = targets.get(t);
+					// 获取targets的get值
+					Method tgetMethod = targetClass.getMethod("get" + captureName(targetKey));
+					Object targetValue = tgetMethod.invoke(targetObj);
+
+					if (sourceValue != null && sourceValue.equals(targetValue)) {
+						sameSet.add(sourceValue);
+
+						if (diffSet.contains(targetValue)) {
+							diffSet.remove(targetValue);
+						}
+						if (delSet.contains(targetValue)) {
+							delSet.remove(targetValue);
+						}
+						// 修改的
+						//保留目标值
+						if(targetClassName.equals(valueFrom)) {
+							Object newTargetObj = targetClass.newInstance();
+							newTargetObj = trans(fieldMap, targetClass, targetObj, newTargetObj);
+							updates.add(newTargetObj);
+						}else {
+							Object newTargetObj = targetClass.newInstance();
+							newTargetObj = trans(fieldMap, sourceClass, targetClass, sourceObj, newTargetObj);
+							updates.add(newTargetObj);
+						}
+						
+
+					} else {
+						// sourceValue不在相同的set里
+						if (!sameSet.contains(sourceValue)) {
+							diffSet.add(sourceValue);
+						}
+						// targetValue也不在差异的set里,
+						if (!sameSet.contains(targetValue) && !diffSet.contains(targetValue)) {
+							// 说明源表不存在，目标表还存在，要存在delSet里
+							delSet.add(targetValue);
+						}
+
+					}
+
+				} // end targets cycle
+
+				// 新增的 /newAdd
+				if (diffSet.size() > 0 && !sameSet.contains(sourceValue)) {
+					// 实例化新对象
+					Object newTargetObj = targetClass.newInstance();
+					newTargetObj = trans(fieldMap, sourceClass, targetClass, sourceObj, newTargetObj);
+					newAdds.add(newTargetObj);
+				}
+
+			} // end source cycle
+
+			for (int t = 0; t < targets.size(); t++) {
+				Object targetObj = targets.get(t);
+				// 获取targets的get值
+				Method tgetMethod = targetClass.getMethod("get" + captureName(targetKey));
+				Object targetValue = tgetMethod.invoke(targetObj);
+				if (delSet.contains(targetValue)) {
+					// 实例化新对象
+					Object newTargetObj = targetClass.newInstance();
+					newTargetObj = trans(fieldMap, targetClass, targetObj, newTargetObj);
+					deletes.add(newTargetObj);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		results[0] = newAdds;
+		results[1] = updates;
+		results[2] = deletes;
+
+		return results;
+	}
+	
+	@Override
+	public List[] transToListArray(List sources, List targets, String targetClassName, Map fieldMap, Map compareMap) {
+		List[] results = new List[3];
+		List newAdds = new ArrayList<>();
+		List updates = new ArrayList<>();
+		List deletes = new ArrayList<>();
+		if (sources == null || sources.size() == 0) {
+			return results;
+		}
+		if (targets == null || targets.size() == 0) {
+			results[0] = transToList(sources, targetClassName, fieldMap, compareMap);
+			return results;
+		}
+		Set<Object> diffSet = new HashSet<>();
+		Set<Object> sameSet = new HashSet<>();
+		Set<Object> delSet = new HashSet<>();
+
+		String sourceKey = null;
+		String targetKey = null;
+		Iterator<Entry<Object, Object>> entries = compareMap.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry<Object, Object> entry = entries.next();
+			sourceKey = (String) entry.getKey();
+			targetKey = (String) entry.getValue();
+		}
+		try {
+			String sourceClsName = sources.get(0).getClass().getName();
+			Class<?> sourceClass = Class.forName(sourceClsName);
+
+			String targetClsName = targets.get(0).getClass().getName();
+			Class<?> targetClass = Class.forName(targetClsName);
 
 			for (int s = 0; s < sources.size(); s++) {
 				Object sourceObj = sources.get(s);
@@ -71,7 +182,7 @@ public class ListTranser implements ComTranser {
 					Method tgetMethod = targetClass.getMethod("get" + captureName(targetKey));
 					Object targetValue = tgetMethod.invoke(targetObj);
 
-					if (sourceValue!=null && sourceValue.equals(targetValue)) {
+					if (sourceValue != null && sourceValue.equals(targetValue)) {
 						sameSet.add(sourceValue);
 
 						if (diffSet.contains(targetValue)) {
@@ -101,9 +212,8 @@ public class ListTranser implements ComTranser {
 
 				} // end targets cycle
 
-				// 新增的
+				// 新增的 /newAdd
 				if (diffSet.size() > 0 && !sameSet.contains(sourceValue)) {
-					// 修改的
 					// 实例化新对象
 					Object newTargetObj = targetClass.newInstance();
 					newTargetObj = trans(fieldMap, sourceClass, targetClass, sourceObj, newTargetObj);
@@ -124,22 +234,19 @@ public class ListTranser implements ComTranser {
 					deletes.add(newTargetObj);
 				}
 			}
-			// }
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		results = new List[3];
 		results[0] = newAdds;
 		results[1] = updates;
 		results[2] = deletes;
-		// }
 
 		return results;
 	}
 
 	@Override
-	public List sync(List sources, String targetClassName, Map fieldMap, Map compareMap) {
+	public List transToList(List sources, String targetClassName, Map fieldMap, Map compareMap) {
 		List results = new ArrayList<>();
 		for (int i = 0; i < sources.size(); i++) {
 			try {
@@ -158,7 +265,7 @@ public class ListTranser implements ComTranser {
 		return results;
 	}
 
-	// 数据获取转化s
+	// 数据获取转化Object
 	private Object trans(Map<Object, Object> fieldMap, Class<?> sourceClass, Class<?> targetClass, Object sourceObj,
 			Object newTargetObj) {
 
@@ -219,5 +326,7 @@ public class ListTranser implements ComTranser {
 		cs[0] -= 32;// 进行字母的ascii编码前移
 		return String.valueOf(cs);
 	}
+
+	
 
 }

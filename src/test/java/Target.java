@@ -1,8 +1,9 @@
-package main.test;
+package test.java;
 
 import java.io.Serializable;
 
-public class En implements Serializable {
+public class Target implements Serializable {
+	
 	/**
 	 * 
 	 */
@@ -10,6 +11,8 @@ public class En implements Serializable {
 	
 	private int id;
 	private String name;
+	private int value;
+	
 	public int getId() {
 		return id;
 	}
@@ -21,6 +24,12 @@ public class En implements Serializable {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public int getValue() {
+		return value;
+	}
+	public void setValue(int value) {
+		this.value = value;
 	}
 	
 }
