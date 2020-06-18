@@ -1,2 +1,3 @@
 # comtranser
-A universal java class transform util.
+means common transformer.
+A common java class transform util.
