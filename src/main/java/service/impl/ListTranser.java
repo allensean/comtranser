@@ -1,4 +1,4 @@
-package main.java.service.impl;
+package service.impl;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import main.java.service.ComTranser;
+import service.ComTranser;
+
 
 /**
  * @author Allen Sean
@@ -140,10 +141,11 @@ public class ListTranser implements ComTranser {
 	
 	@Override
 	public List[] transToListArray(List sources, List targets, String targetClassName, Map fieldMap, Map compareMap) {
+		List[] results = new List[3];
 		if (sources == null || sources.size() == 0) {
 			return results;
 		}
-		String sourceClsName = sources.get(i).getClass().getName();
+		String sourceClsName = sources.get(0).getClass().getName();
 		return transToListArray(sources,targets,targetClassName,fieldMap,compareMap,sourceClsName);
 	}
 

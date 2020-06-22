@@ -1,4 +1,4 @@
-package test.java;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,20 +7,49 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import main.java.service.ComTranser;
-import main.java.service.impl.ListTranser;
+import service.ComTranser;
+import service.impl.ListTranser;
+import test.java.Source;
+
 
 @SuppressWarnings("unchecked")
 public class ComTranserTest {
 
 	@Test
 	public void batchEx() {
+		testTransListToListArrayEmptyMap();
 		testTransListToListArrayEmptySources();
 		testTransListToListArrayEmptyTargets();
 		TestTransListToListArrayMoreSources();
 		TestTransListToListArrayMoreTargets();
 		TestTransListToListArraySameNumDiffEle();
 		TestTransListToListArrayUseTargetsValue();
+
+	}
+	
+	void testTransListToListArrayEmptyMap() {
+
+		System.out.println("****************testTransListToListArrayEmptyMap*****************");
+
+		List<Source> sources = new ArrayList<>();
+
+		List<Target> targets = new ArrayList<>();
+		Target target = new Target();
+		target.setId(1);
+		target.setName("x");
+		targets.add(target);
+
+		Map<Object, Object> fields = new HashMap<Object, Object>();
+
+
+		Map<Object, Object> compares = new HashMap<Object, Object>();
+		compares.put("name", "name");
+
+		ComTranser<Source, Target, Object, Object> data = new ListTranser();
+		List<Target>[] es = data.transToListArray(sources, targets, new Target().getClass().getName(), fields,
+				compares);
+
+		outprint(es);
 
 	}
 
