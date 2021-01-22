@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("rawtypes")
-public interface ComTranser<E,T,K,V> {
+public interface IComTranser<E,T,K,V> {
 	
 	/**
 	 * compare two list ,return result. 比较两个list，并返回结果
@@ -15,7 +15,7 @@ public interface ComTranser<E,T,K,V> {
 	 * @param compareMap 要比较的字段键值对
 	 * @return return array[List<T>newAdds,List<T>updates，List<T>deletes]. 返回数组[List<T>新增，List<T>修改，List<T>删除]
 	 */
-	List[] transToListArray(List<E> sources, List<T> targets, String targetClassName, Map<K, V> fieldMap,
+	List[] compareAndTransfer(List<E> sources, List<T> targets, String targetClassName, Map<K, V> fieldMap,
 			Map<K, V> compareMap);
 	
 	/**
@@ -28,7 +28,7 @@ public interface ComTranser<E,T,K,V> {
 	 * @param valueFrom targetClassName or sourceClassName, default sources,填写targetClassName or sourceClassName,默认从sources取值
 	 * @return return array[List<T>newAdds,List<T>updates，List<T>deletes]. 返回数组[List<T>新增，List<T>修改，List<T>删除]
 	 */
-	List[] transToListArray(List<E> sources, List<T> targets, String targetClassName, Map<K, V> fieldMap,
+	List[] compareAndTransfer(List<E> sources, List<T> targets, String targetClassName, Map<K, V> fieldMap,
 			Map<K, V> compareMap,String valueFrom);
 	
 	
@@ -41,6 +41,6 @@ public interface ComTranser<E,T,K,V> {
 	 * @param compareMap 要比较的字段键值对
 	 * @return
 	 */
-	List transToList(List<E> sources, String targetClassName, Map<K, V> fieldMap,
+	List compareAndTransfer(List<E> sources, String targetClassName, Map<K, V> fieldMap,
 			Map<K, V> compareMap);
 }

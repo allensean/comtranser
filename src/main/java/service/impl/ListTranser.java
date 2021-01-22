@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import service.ComTranser;
+import service.IComTranser;
 
 
 /**
@@ -22,10 +22,10 @@ import service.ComTranser;
  * @date 2020/6/15 17:01
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ListTranser implements ComTranser {
+public class ListTranser implements IComTranser {
 
 	@Override
-	public List[] transToListArray(List sources, List targets, String targetClassName, Map fieldMap, Map compareMap,
+	public List[] compareAndTransfer(List sources, List targets, String targetClassName, Map fieldMap, Map compareMap,
 			String valueFrom) {
 		List[] results = new List[3];
 		List newAdds = new ArrayList<>();
@@ -35,7 +35,7 @@ public class ListTranser implements ComTranser {
 			return results;
 		}
 		if (targets == null || targets.size() == 0) {
-			results[0] = transToList(sources, targetClassName, fieldMap, compareMap);
+			results[0] = compareAndTransfer(sources, targetClassName, fieldMap, compareMap);
 			return results;
 		}
 		Set<Object> diffSet = new HashSet<>();
@@ -140,17 +140,17 @@ public class ListTranser implements ComTranser {
 	}
 	
 	@Override
-	public List[] transToListArray(List sources, List targets, String targetClassName, Map fieldMap, Map compareMap) {
+	public List[] compareAndTransfer(List sources, List targets, String targetClassName, Map fieldMap, Map compareMap) {
 		List[] results = new List[3];
 		if (sources == null || sources.size() == 0) {
 			return results;
 		}
 		String sourceClsName = sources.get(0).getClass().getName();
-		return transToListArray(sources,targets,targetClassName,fieldMap,compareMap,sourceClsName);
+		return compareAndTransfer(sources,targets,targetClassName,fieldMap,compareMap,sourceClsName);
 	}
 
 	@Override
-	public List transToList(List sources, String targetClassName, Map fieldMap, Map compareMap) {
+	public List compareAndTransfer(List sources, String targetClassName, Map fieldMap, Map compareMap) {
 		List results = new ArrayList<>();
 		for (int i = 0; i < sources.size(); i++) {
 			try {

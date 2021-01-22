@@ -7,9 +7,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import service.ComTranser;
+import service.IComTranser;
 import service.impl.ListTranser;
-import test.java.Source;
 
 
 @SuppressWarnings("unchecked")
@@ -45,8 +44,8 @@ public class ComTranserTest {
 		Map<Object, Object> compares = new HashMap<Object, Object>();
 		compares.put("name", "name");
 
-		ComTranser<Source, Target, Object, Object> data = new ListTranser();
-		List<Target>[] es = data.transToListArray(sources, targets, new Target().getClass().getName(), fields,
+		IComTranser<Source, Target, Object, Object> data = new ListTranser();
+		List<Target>[] es = data.compareAndTransfer(sources, targets, new Target().getClass().getName(), fields,
 				compares);
 
 		outprint(es);
@@ -72,8 +71,8 @@ public class ComTranserTest {
 		Map<Object, Object> compares = new HashMap<Object, Object>();
 		compares.put("name", "name");
 
-		ComTranser<Source, Target, Object, Object> data = new ListTranser();
-		List<Target>[] es = data.transToListArray(sources, targets, new Target().getClass().getName(), fields,
+		IComTranser<Source, Target, Object, Object> data = new ListTranser();
+		List<Target>[] es = data.compareAndTransfer(sources, targets, new Target().getClass().getName(), fields,
 				compares);
 
 		outprint(es);
@@ -98,8 +97,8 @@ public class ComTranserTest {
 		Map<Object, Object> compares = new HashMap<Object, Object>();
 		compares.put("name", "name");
 
-		ComTranser<Source, Target, Object, Object> data = new ListTranser();
-		List<Target>[] es = data.transToListArray(sources, targets, new Target().getClass().getName(), fields,
+		IComTranser<Source, Target, Object, Object> data = new ListTranser();
+		List<Target>[] es = data.compareAndTransfer(sources, targets, new Target().getClass().getName(), fields,
 				compares);
 
 		outprint(es);
@@ -138,8 +137,8 @@ public class ComTranserTest {
 		compares.put("name", "name");
 		
 
-		ComTranser<Source, Target, Object, Object> data = new ListTranser();
-		List<Target>[] es = data.transToListArray(sources, targets, new Target().getClass().getName(), fields,
+		IComTranser<Source, Target, Object, Object> data = new ListTranser();
+		List<Target>[] es = data.compareAndTransfer(sources, targets, new Target().getClass().getName(), fields,
 				compares);
 
 		outprint(es);
@@ -189,8 +188,8 @@ public class ComTranserTest {
 		Map<Object, Object> compares = new HashMap<Object, Object>();
 		compares.put("name", "name");
 
-		ComTranser<Source, Target, Object, Object> data = new ListTranser();
-		List<Target>[] es = data.transToListArray(sources, targets, new Target().getClass().getName(), fields,
+		IComTranser<Source, Target, Object, Object> data = new ListTranser();
+		List<Target>[] es = data.compareAndTransfer(sources, targets, new Target().getClass().getName(), fields,
 				compares);
 
 		outprint(es);
@@ -246,8 +245,8 @@ public class ComTranserTest {
 		Map<Object, Object> compares = new HashMap<Object, Object>();
 		compares.put("name", "name");
 
-		ComTranser<Source, Target, Object, Object> data = new ListTranser();
-		List<Target>[] es = data.transToListArray(sources, targets, new Target().getClass().getName(), fields,
+		IComTranser<Source, Target, Object, Object> data = new ListTranser();
+		List<Target>[] es = data.compareAndTransfer(sources, targets, new Target().getClass().getName(), fields,
 				compares);
 
 		outprint(es);
@@ -303,8 +302,8 @@ public class ComTranserTest {
 		Map<Object, Object> compares = new HashMap<Object, Object>();
 		compares.put("name", "name");
 
-		ComTranser<Source, Target, Object, Object> data = new ListTranser();
-		List<Target>[] es = data.transToListArray(sources, targets, new Target().getClass().getName(), fields,
+		IComTranser<Source, Target, Object, Object> data = new ListTranser();
+		List<Target>[] es = data.compareAndTransfer(sources, targets, new Target().getClass().getName(), fields,
 				compares,new Target().getClass().getName());
 
 		outprint(es);
